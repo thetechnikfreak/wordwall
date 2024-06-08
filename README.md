@@ -14,6 +14,11 @@ authentication. That means that anyone who accesses the tool may create a
 collaborative cloud of their own. Anyone who views the collaboration page, of
 course, will be allowed to participate immediately.
 
+To support interaction, a temporary SQLite file is managed in order to support
+sequences of words entered by participants. Each time the application is started
+or restarted, the temporary file containing the SQLite file will be removed,
+effectively removing any records of the activities.
+
 ## Installation
 
 WordWall is built to be run in a

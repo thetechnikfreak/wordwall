@@ -8,6 +8,7 @@ License: MIT
 ################################################################################
 
 from typing import Annotated
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from contextlib import asynccontextmanager
 from uuid import uuid4
@@ -21,18 +22,22 @@ from loguru import logger
 
 from . import __header__, __version__, api
 from .configuration import settings
+from .database import connect_database
 
 
 __html_header__ = __header__.replace("\n", r"\n")
 
-APP_COOKIE_NAME = "client_token"
+APP_COOKIE_NAME: str = "client_token"
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     """Application Lifespan System."""
     # Setup
     logger.debug(__header__)
-    yield
+    # Manage Temporary Database File Contextually
+    with TemporaryDirectory() as tmp_directory:
+        connect_database(database_path=Path(tmp_directory) / "words.db")
+        yield
     # Teardown
 
 app = FastAPI(

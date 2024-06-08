@@ -8,6 +8,6 @@ requests
 pyyaml
 python-multipart
 uvicorn[standard]
-tinydb
+pydbantic[sqlite]==0.0.47
 loguru
 simple-toml-configurator
