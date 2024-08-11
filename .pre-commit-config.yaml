@@ -12,5 +12,19 @@ repos:
     # Ruff version.
     rev: v0.5.7
     hooks:
-      # Run the linter.
-      - id: ruff
+    # Run the linter.
+    -   id: ruff
+-   repo: local
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        stages: [pre-push]
+        language: system
+        types: [python]
+        require_serial: true
+        args:
+          [
+            "-rn", # Only display messages
+            "-sn", # Don't display the score
+          ]
