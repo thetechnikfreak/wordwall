@@ -28,3 +28,14 @@ repos:
             "-sn", # Don't display the score
             "--rcfile=.pylintrc", # Link to your config file
           ]
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.51.0
+    hooks:
+    - id: eslint
+      types: [javascript]
+      additional_dependencies: [
+        'globals@13.21.0',
+        'eslint@8.51.0',
+        '@eslint/js',
+        'eslint-config-prettier@9.0.0'
+      ]
