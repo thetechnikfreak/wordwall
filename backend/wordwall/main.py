@@ -51,7 +51,6 @@ app.add_middleware(
     allow_origins=[
         "http://localhost",
         "http://localhost:8000", # Uvicorn Default Server
-        "http://localhost:1313", # Hugo Default Server
     # pylint: disable=no-member
     ] + settings.application.cross_site_origins, # noqa
     # pylint: enable=no-member

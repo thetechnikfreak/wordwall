@@ -19,7 +19,6 @@ repos:
     -   id: pylint
         name: pylint
         entry: pylint
-        stages: [pre-push]
         language: system
         types: [python]
         require_serial: true
