@@ -15,7 +15,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Request, Cookie
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from loguru import logger
@@ -52,7 +52,9 @@ app.add_middleware(
         "http://localhost",
         "http://localhost:8000", # Uvicorn Default Server
         "http://localhost:1313", # Hugo Default Server
-    ] + settings.application.cross_site_origins,
+    # pylint: disable=no-member
+    ] + settings.application.cross_site_origins, # noqa
+    # pylint: enable=no-member
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
