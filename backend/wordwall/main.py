@@ -6,6 +6,7 @@ WordWall - Simple, Self-Hosted, Collaborative Word Cloud Generator.
 License: MIT
 """
 ################################################################################
+# pylint: disable=no-member
 
 from typing import Annotated
 from tempfile import TemporaryDirectory
@@ -54,8 +55,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost",
         "http://localhost:8000", # Uvicorn Default Server
-    # pylint: disable=no-member
-    ] + settings.application.cross_site_origins, # noqa
+    ] + settings.application.cross_site_origins,
     # pylint: enable=no-member
     allow_credentials=True,
     allow_methods=["*"],
@@ -88,6 +88,8 @@ async def root(request: Request) -> HTMLResponse:
             "console_app_name": __html_header__,
             "wall_id": wall.wall_id,
             "wall_hash": wall.wall_hash,
+            "site_name": settings.application.site_name,
+            "defer_url": settings.application.site_url,
         },
     )
     return response
@@ -102,6 +104,8 @@ async def operate_wall(request: Request, wall_id: str) -> HTMLResponse:
             "console_app_name": __html_header__,
             "wall_id": wall_id,
             "wall_hash": main_manager.get_by_id(wall_id).wall_hash,
+            "site_name": settings.application.site_name,
+            "defer_url": settings.application.site_url,
         },
     )
     return response
@@ -124,6 +128,8 @@ async def participant_page(
             APP_COOKIE_NAME: client_token,
             "console_app_name": __html_header__,
             "wall_hash": wall,
+            "site_name": settings.application.site_name,
+            "defer_url": settings.application.site_url,
         },
     )
     response.set_cookie(APP_COOKIE_NAME, client_token)

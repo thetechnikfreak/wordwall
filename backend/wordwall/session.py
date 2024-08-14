@@ -14,12 +14,9 @@ class Wall:
     """Structure to Represent a Wall."""
 
     wall_id: str
-    wall_hash: str
-
     def __init__(self):
         """Set Up New Wall Record."""
         self.wall_id = str(uuid4())
-        self.wall_hash = str(hash(self.wall_id))[:-4]
         self._active = True
 
     @property
@@ -31,6 +28,11 @@ class Wall:
     def active(self, new: bool) -> None:
         """Set the State of the Active/Inactive Flag."""
         self._active = new
+
+    @property
+    def wall_hash(self) -> str:
+        """Return the 4-Character Hash of the Wall ID."""
+        return str(hash(self.wall_id))[-4:]
 #pylint: enable=too-few-public-methods
 
 ALL_WALLS: list[Wall] = []

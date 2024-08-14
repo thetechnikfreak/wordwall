@@ -5,6 +5,15 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
+    "@mdi/svg": "^7.4.47",
+    "@mui/icons-material": "^5.16.7",
+    "@mui/lab": "^5.0.0-alpha.173",
+    "@mui/material": "^5.16.7",
+    "@mui/styles": "^5.16.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "babel-jest": "^27.4.2",
@@ -42,6 +51,7 @@
     "react-dev-utils": "^12.0.1",
     "react-dom": "^18.3.1",
     "react-refresh": "^0.11.0",
+    "react-router-dom": "^6.26.0",
     "resolve": "^1.20.0",
     "resolve-url-loader": "^4.0.0",
     "sass-loader": "^12.3.0",
@@ -131,5 +141,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }

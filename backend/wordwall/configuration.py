@@ -17,6 +17,7 @@ CONFIG_FILE_PATH = Path(os.getenv("CONFIG_FILE", "./config/app.conf"))
 DEFAULT_CONFIGURATION = {
     "application": {
         "site_url": "",
+        "site_name": "WordWall",
         "cross_site_origins": [],
         "storage_path": "",
     },
