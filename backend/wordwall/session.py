@@ -13,10 +13,11 @@ from uuid import uuid4
 class Wall:
     """Structure to Represent a Wall."""
 
-    wall_id: str
+    id: str
+
     def __init__(self):
         """Set Up New Wall Record."""
-        self.wall_id = str(uuid4())
+        self.id = str(uuid4())
         self._active = True
 
     @property
@@ -30,9 +31,9 @@ class Wall:
         self._active = new
 
     @property
-    def wall_hash(self) -> str:
+    def hash(self) -> str:
         """Return the 4-Character Hash of the Wall ID."""
-        return str(hash(self.wall_id))[-4:]
+        return str(hash(self.id))[-4:]
 #pylint: enable=too-few-public-methods
 
 ALL_WALLS: list[Wall] = []
@@ -55,13 +56,13 @@ class Manager:
     def get_by_id(self, wall_id: str) -> Wall:
         """Locate the Wall by its ID."""
         for wall in self._walls:
-            if wall.wall_id == wall_id:
+            if wall.id == wall_id:
                 return wall
         return None
 
     def get_by_hash(self, wall_hash: str) -> Wall:
         """Locate the Wall by its ID."""
         for wall in self._walls:
-            if wall.wall_hash == wall_hash:
+            if wall.hash == wall_hash:
                 return wall
         return None

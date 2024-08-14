@@ -6,6 +6,11 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CssBaseline from '@mui/material/CssBaseline';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -82,8 +87,74 @@ const tiers = [
   },
 ];
 
+const dialogOptions = {
+  host: {
+    title: "Name your WordWall",
+    description: "Give your team a name they can get behind. Then get Collaborating!",
+    buttonText: "Start",
+    path: "/host/{wall_id}"
+  },
+  participate: {
+    title: "Weigh in with your Words",
+    description: "Join your team and start adding words to collaborate!",
+    buttonText: "Join",
+    path: "/play/{wall_hash}"
+  },
+  review: {
+    title: "Review your Team's WordWall",
+    description: "Take a peek at the WordWall your team built!",
+    buttonText: "Review",
+    path: "/review/{wall_hash}"
+  },
+};
+
+function ActivityCard({tier, classes, onClick}) {
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <Card
+      onClick={() => {onClick(tier.title)}}
+      onMouseOut={() => setHovered(false)}
+      onMouseOver={() => setHovered(true)}
+      style={{
+          transform: `${hovered ? 'scale(1.1,1.1)' : 'scale(1,1)'}`,
+          zIndex: `${hovered ? '999' : '1'}`
+      }}
+    >
+      <CardHeader
+        title={tier.title}
+        subheader={tier.subheader}
+        titleTypographyProps={{ align: 'center' }}
+        subheaderTypographyProps={{ align: 'center' }}
+        className={classes.cardHeader}
+      />
+      <CardContent>
+        <Grid container justifyContent="center" >
+          <Icon path={tier.icon} size={5} />
+        </Grid>
+      </CardContent>
+      <CardActions>
+        <Button
+          fullWidth
+          variant={tier.buttonVariant}
+          color="primary"
+          onClick={() => {onClick(tier.title)}}
+        >
+          {tier.buttonText}
+        </Button>
+      </CardActions>
+    </Card>
+  );
+}
+
 export default function ActivitySelect() {
   const classes = useStyles();
+  const [diagOpts, setDiagOpts] = React.useState(null);
+
+  const prepareDialog = (dialog) => {
+    setDiagOpts(dialogOptions[dialog.toLowerCase()])
+  }
+
 
   return (
     <React.Fragment>
@@ -122,26 +193,8 @@ export default function ActivitySelect() {
         <Grid container spacing={5} alignItems="flex-end">
           {tiers.map((tier) => (
             // Enterprise card is full width at sm breakpoint
-            <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 6} md={4}>
-              <Card>
-                <CardHeader
-                  title={tier.title}
-                  subheader={tier.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  subheaderTypographyProps={{ align: 'center' }}
-                  className={classes.cardHeader}
-                />
-                <CardContent>
-                  <Grid container justifyContent="center" >
-                    <Icon path={tier.icon} size={5} />
-                  </Grid>
-                </CardContent>
-                <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant} color="primary">
-                    {tier.buttonText}
-                  </Button>
-                </CardActions>
-              </Card>
+            <Grid item key={tier.title} xs={12} sm={6} md={4}>
+              <ActivityCard tier={tier} classes={classes} onClick={prepareDialog}/>
             </Grid>
           ))}
         </Grid>
@@ -153,6 +206,29 @@ export default function ActivitySelect() {
         </Box>
       </Container>
       {/* End footer */}
+      {/* Dialog */}
+      <Dialog
+        open={diagOpts !== null}
+        onClose={() => {setDiagOpts(null)}}
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
+      >
+        <DialogTitle id="dialog-title" textAlign="center">
+          {!!diagOpts && diagOpts.title}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="dialog-description" textAlign="center">
+          {!!diagOpts && diagOpts.description}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {setDiagOpts(null)}}>Cancel</Button>
+          <Button onClick={() => {}} autoFocus>
+            {!!diagOpts && diagOpts.buttonText}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* End dialog */}
     </React.Fragment>
   );
 }

@@ -28,7 +28,7 @@ async def active_wall(func: Awaitable, wall_hash: str):
                 status_code=status.HTTP_410_GONE,
                 detail="That WordWall is not presently active."
             )
-        return await get_words_for_wall(wall_id=wall.wall_hash)
+        return await get_words_for_wall(wall_id=wall.hash)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="That WordWall could not be found."

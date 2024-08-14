@@ -7,10 +7,10 @@ import theme from "./theme";
 import './index.css';
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <ActivitySelect />
-  },
+  {path: "/", element: <ActivitySelect />},
+  {path: "/play/:hash", element: <ActivitySelect />},
+  {path: "/host/:hash", element: <ActivitySelect />},
+  {path: "/review/:hash", element: <ActivitySelect />},
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
