@@ -1,4 +1,7 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
+import { formatUnicorn } from "format-unicorn";
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -150,9 +153,19 @@ function ActivityCard({tier, classes, onClick}) {
 export default function ActivitySelect() {
   const classes = useStyles();
   const [diagOpts, setDiagOpts] = React.useState(null);
+  const navigate = useNavigate();
 
   const prepareDialog = (dialog) => {
     setDiagOpts(dialogOptions[dialog.toLowerCase()])
+  }
+
+
+  const doNavigate = (path) => {
+    // Use the Client-Specific Wall ID or Hash to Navigate
+    navigate(path.formatUnicorn({
+      "wall_hash": window.wall_hash,
+      "wall_id": window.wall_id,
+    }));
   }
 
 
@@ -223,7 +236,7 @@ export default function ActivitySelect() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => {setDiagOpts(null)}}>Cancel</Button>
-          <Button onClick={() => {}} autoFocus>
+          <Button onClick={() => {doNavigate(diagOpts.path)}} autoFocus>
             {!!diagOpts && diagOpts.buttonText}
           </Button>
         </DialogActions>
