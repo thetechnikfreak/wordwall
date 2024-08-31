@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.cloud-wrapper {
+  border: 1px solid var(--border-color);
+  text-align: center;
+  background-color: var(--section-color);
+  padding: 20px;
+}

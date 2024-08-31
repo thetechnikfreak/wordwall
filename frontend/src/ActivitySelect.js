@@ -163,8 +163,8 @@ export default function ActivitySelect() {
   const doNavigate = (path) => {
     // Use the Client-Specific Wall ID or Hash to Navigate
     navigate(path.formatUnicorn({
-      "wall_hash": window.wall_hash,
-      "wall_id": window.wall_id,
+      wall_hash: window.wall_hash,
+      wall_id: window.wall_id,
     }));
   }
 
