@@ -29,9 +29,11 @@ async def get_wall_name(wall_id: str) -> str:
     """Provide the Friendly Name for the Wall."""
     return manager.get_by_id(wall_id=wall_id).name
 
+# pylint: disable=too-few-public-methods
 class WallData(BaseModel):
     """Base Data for a Wall."""
     name: str
+# pylint: enable=too-few-public-methods
 
 @router.post("/{wall_id}/name")
 async def set_wall_name(wall_id: str, data: WallData):
