@@ -93,6 +93,16 @@ async def get_words_for_wall(
         detail="That WordWall could not be found."
     )
 
+@router.get("/{wall_id}/count")
+async def get_word_count(wall_id: str) -> int:
+    """Count the Total Number of Words for the Wall."""
+    if (wall := manager.get_by_id(wall_id=wall_id)):
+        return await WordResponse.filter(
+            WordResponse.gt('word', ""), # Ensure Not Empty
+            wall_hash=wall.hash,
+            count_rows=True, # Return as a count
+        )
+
 @router.put("/")
 async def add_word_to_wall(
     word: WordResponse,

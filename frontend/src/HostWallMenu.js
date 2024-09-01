@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useNavigate } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import Icon from '@mdi/react';
+import { mdiFileWordBox } from '@mdi/js';
 import {
   AppBar, Box, Button, FormControlLabel, Grid, Stack, Switch, Tooltip,
   TextField, Toolbar
@@ -12,6 +14,71 @@ import QrCode from './QrCode';
 export default function HostWallMenu() {
   const [wallVisibleForPlayers, setWallVisibleForPlayers] = React.useState(false);
   const [viewWall, setViewWall] = React.useState(true);
+  const [wordCount, setWordCount] = React.useState(0);
+  const [wallName, setWallNames] = React.useState("");
+  const navigate = useNavigate();
+
+  React.useEffect(()=>{
+    // Load Requisites when page Completes
+    getWordCount();
+    // Call the API
+    fetch(`/api/v1/walls/${window.wall_id}/name`)
+   .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+       return response.json();
+   })
+   .then(json => {
+    console.log(json);
+    setWallNames(json);
+   })
+   .catch(function () {
+       console.error(`Failed to load word count for ${window.wall_id}`)
+   })
+    setInterval(getWordCount, 1000);
+  },[]);
+
+  const getWordCount = () => {
+    // Call the API
+    fetch(`/api/v1/words/${window.wall_id}/count`)
+   .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+       return response.json();
+   })
+   .then(json => {
+    setWordCount(json);
+   })
+   .catch(function () {
+       console.error(`Failed to load word count for ${window.wall_id}`)
+   })
+  }
+
+  const updateTitle = (newName) => {
+    // Call the API
+    fetch(`/api/v1/walls/${window.wall_id}/name`, {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          name: newName,
+        })
+    })
+    .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+   })
+   .catch(function () {
+       console.error(`Failed to update the name for wall: ${window.wall_id}`)
+   })
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -25,9 +92,16 @@ export default function HostWallMenu() {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <Icon path={mdiFileWordBox} size={1} onClick={() => {navigate("/")}}/>
           </IconButton>
-          <TextField id="wall-name" label="Wall Name" variant="standard" fullWidth />
+          <TextField
+            id="wall-name"
+            label="Wall Name"
+            variant="standard"
+            value={wallName}
+            fullWidth
+            onChange={(e) => {updateTitle(e.target.value)}}
+          />
           <Tooltip title={wallVisibleForPlayers ? "Make wall visible to players." : "Hide wall so players cannot see it."}>
             <FormControlLabel control={
               <Switch disabled checked={wallVisibleForPlayers} onChange={() => {setWallVisibleForPlayers(!wallVisibleForPlayers)}}/>
@@ -59,11 +133,19 @@ export default function HostWallMenu() {
                 </Grid>
                 <Grid item md={2} sx={null}></Grid>
                 <Grid item md={3} sx={12}>
-                  Responses: 123
+                  Responses:
+                  {wordCount}
                 </Grid>
                 <Grid item md={2} sx={null}></Grid>
               </Grid>
-              {viewWall && <FloatingCloud />}
+              {viewWall &&
+                <FloatingCloud
+                  wall_id={window.wall_id}
+                  onClick={() => {
+                    navigate(`/review/${window.wall_hash}`)
+                  }}
+                />
+              }
             </Stack>
           </Grid>
         </Grid>

@@ -10,6 +10,7 @@
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",
     "@mdi/svg": "^7.4.47",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@mui/icons-material": "^5.16.7",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",

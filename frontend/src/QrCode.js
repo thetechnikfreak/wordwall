@@ -2,6 +2,7 @@ import * as React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { formatUnicorn } from "format-unicorn";
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -58,7 +59,9 @@ export default function QrCode() {
         />
         </div>
         <Typography variant='body1' align='center'>
-        {location}
+        <Link color="inherit" href={location}>
+          {location}
+        </Link>
         </Typography>
       </QrPaper>
     );

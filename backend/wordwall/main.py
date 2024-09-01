@@ -37,14 +37,14 @@ main_manager = Manager()
 async def lifespan(_: FastAPI):
     """Application Lifespan System."""
     # Setup
-    logger.debug(__header__)
+    logger.info(__header__)
+    logger.info(f"Version: {__version__}")
     # Manage Temporary Database File Contextually
     with TemporaryDirectory() as tmp_directory:
         db_file = Path(tmp_directory) / "words.db"
         logger.debug(f"Temporary Database File: {db_file}")
         await connect_database(database_path=db_file)
         yield
-    # Teardown
 
 app = FastAPI(
     title="WordWall",
@@ -123,7 +123,7 @@ async def operate_wall(request: Request, wall_id: str) -> HTMLResponse:
         )
     except AttributeError:
         return RedirectResponse(
-            url=f"{settings.application.site_url}?no_wall_hash",
+            url=f"{settings.application.site_url}?wall_not_found",
         )
 
 @app.get("/play/{wall_hash}", response_class=HTMLResponse, include_in_schema=False)
@@ -139,13 +139,13 @@ async def participant_page(
     if main_manager.get_by_hash(wall_hash) is None:
         ensure_base_url(request=request)
         return RedirectResponse(
-            url=f"{settings.application.site_url}?no_wall_hash",
+            url=f"{settings.application.site_url}?wall_not_found",
         )
     if not client_token:
         client_token = str(uuid4())
     response = core_response(
         request=request,
-        wall_id=main_manager.get_by_hash(wall_hash),
+        wall_id=main_manager.get_by_hash(wall_hash).id,
         wall_hash=wall_hash,
     )
     response.set_cookie(APP_COOKIE_NAME, client_token)

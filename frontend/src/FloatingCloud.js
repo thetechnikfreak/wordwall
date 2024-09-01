@@ -11,7 +11,7 @@ const WordPaper = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
   }));
 
-export default function FloatingCloud({wall_id = "test"}) {
+export default function FloatingCloud({wall_id = "test", onClick=() => {}}) {
   const [words, setWords] = React.useState([]);
 
   React.useEffect(()=>{
@@ -40,7 +40,7 @@ export default function FloatingCloud({wall_id = "test"}) {
 
   return (
     <>
-      <WordPaper variant="elevation" elevation={6}>
+      <WordPaper variant="elevation" elevation={6} onClick={onClick}>
         <TagCloud
             minSize={20}
             maxSize={64}

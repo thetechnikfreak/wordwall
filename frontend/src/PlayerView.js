@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useNavigate } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import Icon from '@mdi/react';
+import { mdiFileWordBox } from '@mdi/js';
 import { AppBar, Box, Grid, TextField, Typography, Toolbar } from '@mui/material';
 import Cookies from 'js-cookie';
 
@@ -14,6 +16,7 @@ function WordElement({word, onChange}) {
       <TextField
         variant="filled"
         fullWidth
+        label="Enter a Word!"
         value={word.word}
         onChange={(e) => {onChange(e.target.value, word.id)}} />
     </Grid>
@@ -25,10 +28,26 @@ function WordElement({word, onChange}) {
 export default function PlayerView() {
   const client_id = Cookies.get('client_token');
   const [myWords, setMyWords] = React.useState([]);
+  const [wallName, setWallNames] = React.useState("");
+  const navigate = useNavigate();
 
   React.useEffect(()=>{
     // Load Requisites when page Completes
     getWords();
+    // Call the API
+    fetch(`/api/v1/walls/${window.wall_id}/name`)
+   .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+       return response.json();
+   })
+   .then(json => {
+    setWallNames(json);
+   })
+   .catch(function () {
+       console.error(`Failed to load word count for ${window.wall_id}`)
+   })
   },[client_id]);
 
 
@@ -146,9 +165,11 @@ export default function PlayerView() {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <Icon path={mdiFileWordBox} size={1} onClick={() => {navigate("/")}}/>
           </IconButton>
-          <Typography variant="h1" fullWidth />
+          <Typography variant="h4" fullWidth>
+            {wallName}
+          </Typography>
         </Toolbar>
       </AppBar>
       <Box m={2} pt={3}>

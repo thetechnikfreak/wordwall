@@ -1,11 +1,14 @@
 import * as React from 'react';
+import { useNavigate } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import Icon from '@mdi/react';
+import { mdiFileWordBox } from '@mdi/js';
 import { AppBar, Box, Typography, Toolbar } from '@mui/material';
 import FloatingCloud from './FloatingCloud';
 
 export default function ReviewWall() {
+  const navigate = useNavigate();
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -19,13 +22,13 @@ export default function ReviewWall() {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <Icon path={mdiFileWordBox} size={1} onClick={() => {navigate("/")}}/>
           </IconButton>
           <Typography variant="h1" fullWidth />
         </Toolbar>
       </AppBar>
       <Box m={2} pt={3}>
-        <FloatingCloud />
+        <FloatingCloud wall_id={window.wall_id}/>
       </Box>
     </Box>
   );

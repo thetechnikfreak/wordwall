@@ -16,6 +16,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Link from '@mui/material/Link';
@@ -104,19 +105,25 @@ const dialogOptions = {
     title: "Name your WordWall",
     description: "Give your team a name they can get behind. Then get Collaborating!",
     buttonText: "Start",
+    inputPrompt: "New Title",
+    inputDefault: "",
     path: "/host/{wall_id}"
   },
   participate: {
     title: "Weigh in with your Words",
     description: "Join your team and start adding words to collaborate!",
     buttonText: "Join",
-    path: "/play/{wall_hash}"
+    inputPrompt: "Game Code",
+    inputDefault: "{wall_hash}",
+    path: "/play/{userInput}"
   },
   review: {
     title: "Review your Team's WordWall",
     description: "Take a peek at the WordWall your team built!",
     buttonText: "Review",
-    path: "/review/{wall_hash}"
+    inputPrompt: "Game Code",
+    inputDefault: "{wall_hash}",
+    path: "/review/{userInput}"
   },
 };
 
@@ -162,6 +169,7 @@ function ActivityCard({tier, classes, onClick}) {
 export default function ActivitySelect() {
   const classes = useStyles();
   const [diagOpts, setDiagOpts] = React.useState(null);
+  const [userInput, setUserInput] = React.useState("");
   const navigate = useNavigate();
 
   const prepareDialog = (dialog) => {
@@ -170,10 +178,34 @@ export default function ActivitySelect() {
 
 
   const doNavigate = (path) => {
+    if (path.includes("host")) {
+      // Set the Name
+      // Call the API
+      fetch(`/api/v1/walls/${window.wall_id}/name`, {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          name: userInput,
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+        }
+      })
+      .catch(function () {
+          console.error(`Failed to update the name for wall: ${window.wall_id}`)
+      })
+    }
     // Use the Client-Specific Wall ID or Hash to Navigate
     navigate(path.formatUnicorn({
-      wall_hash: window.wall_hash,
       wall_id: window.wall_id,
+      userInput: userInput,
     }));
   }
 
@@ -242,6 +274,18 @@ export default function ActivitySelect() {
           <DialogContentText id="dialog-description" textAlign="center">
           {!!diagOpts && diagOpts.description}
           </DialogContentText>
+          <TextField
+            id="user-input"
+            label={!!diagOpts ? diagOpts.inputPrompt : ""}
+            variant="standard"
+            defaultValue={
+              (!!diagOpts ? diagOpts.inputDefault : "").formatUnicorn({
+                wall_hash: window.wall_hash,
+              })
+            }
+            fullWidth
+            onChange={(e) => {setUserInput(e.target.value)}}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => {setDiagOpts(null)}}>Cancel</Button>

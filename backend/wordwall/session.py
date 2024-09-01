@@ -16,10 +16,12 @@ class Wall:
     """Structure to Represent a Wall."""
 
     id: str
+    name: str
 
     def __init__(self):
         """Set Up New Wall Record."""
         self.id = str(uuid4())
+        self.name = ""
         self._active = True
 
     @property
