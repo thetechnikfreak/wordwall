@@ -27,10 +27,6 @@ DEFAULT_CONFIGURATION = {
 class ConfigurationSettings(Configuration):
     """Base Configuration Data for Application."""
 
-    @property
-    def recordings_file_path(self) -> Path:
-        """Evaluate the Correct Path, and Confirm that it Exists."""
-
 
 settings = ConfigurationSettings()
 settings.init_config(

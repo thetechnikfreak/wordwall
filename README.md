@@ -37,5 +37,41 @@ services:
       - 8082:80
     restart: unless-stopped
     environment:
+      # Optional Configuration Parameters
       # - SITE_URL: https://wordwall.example.com
+      # - SITE_NAME: WordWall
+    volumes:
+      - ./config:/server/config
+
 ```
+
+## Development
+
+Developing WordWall should be relatively simple. It falls into a few general
+steps. Install the `npm` dependencies, build the frontend, install the `python`
+dependencies, then run the backend.
+
+### Installing Frontend (`npm`) Dependencies
+
+1. `cd` to the `frontend/` folder.
+2. Run the command: `yarn install` (requires [yarn](https://classic.yarnpkg.com/lang/en/docs/install/))
+
+### Building Frontend
+
+1. `cd` to the `frontend/` folder.
+2. Run the command `yarn build`. This will generate all of the Javascript/CSS
+files needed in the `backend/wordwall/static/react/` folder, and the `index.html`
+in `backend/wordwall/templates/`.
+
+### Installing Backend (`python`) Dependencies
+
+1. Create a Python Virtual Environment with `python3 -m venv venv`.
+2. Activate the virtual environment.
+3. Run the command `pip install -r backend/requirements.txt`
+
+### Run the Application
+
+1. `cd` to the `backend/` folder.
+2. Run the command: `uvicorn wordwall.main:app --reload --host 0.0.0.0`. This
+will expose the application on all interfaces on the computer running the app.
+This will allow you to test the app from other local devices.
