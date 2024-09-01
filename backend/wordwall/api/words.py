@@ -73,8 +73,7 @@ async def get_words_for_wall(
         if player_id:
             extra_filters["player_id"] = player_id
         word_records = await WordResponse.filter(
-            WordResponse.gt('word', ""), # Ensure Not Empty
-            wall_hash=wall.hash
+            wall_hash=wall.hash,
             **extra_filters
         )
         if player_id:
@@ -82,6 +81,9 @@ async def get_words_for_wall(
             return word_records
         words = {}
         for record in word_records:
+            if not record.word:
+                # Null/Empty -- Skip
+                continue
             cleaned_word = record.word.strip()
             if cleaned_word not in words:
                 words[cleaned_word] = 1 # Record Word

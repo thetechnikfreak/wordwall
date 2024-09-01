@@ -15,28 +15,29 @@ export default function FloatingCloud({wall_id = "test", onClick=() => {}}) {
   const [words, setWords] = React.useState([]);
 
   React.useEffect(()=>{
+    // Define API Getter
+    const getWords = () => {
+      // Call the API
+      fetch(`/api/v1/words/${wall_id}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+    })
+    .then(json => {
+        setWords(json);
+    })
+    .catch(function () {
+        console.error(`Failed to load words for ${wall_id}`)
+    })
+    }
     // Load Requisites when page Completes
     getWords();
     setInterval(getWords, 1000);
-  },[]);
+  },[wall_id]);
 
 
-  const getWords = () => {
-    // Call the API
-    fetch(`/api/v1/words/${wall_id}`)
-   .then(response => {
-       if (!response.ok) {
-           throw new Error("HTTP error " + response.status);
-       }
-       return response.json();
-   })
-   .then(json => {
-       setWords(json);
-   })
-   .catch(function () {
-       console.error(`Failed to load words for ${wall_id}`)
-   })
-  }
 
   return (
     <>
