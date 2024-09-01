@@ -78,6 +78,9 @@ async def get_words_for_wall(
             return word_records
         words = {}
         for record in word_records:
+            if not record.word:
+                # Null/Empty -- Skip
+                continue
             if record.word not in words:
                 words[record.word] = 1 # Record Word
             else:
@@ -98,6 +101,7 @@ async def add_word_to_wall(
     """Add a new Word to a Specified Wall."""
     if player_id:
         word.player_id = player_id
+    word.word = word.word.lower()
     return await active_wall(
         func=word.insert,
         wall_hash=word.wall_hash,
@@ -109,6 +113,7 @@ async def update_word_on_wall(
     word: WordResponse
 ) -> list[dict[str, Union[int, str]]]:
     """Update an Existing Word on a Specified Wall."""
+    word.word = word.word.lower()
     return await active_wall(
         func=word.update,
         wall_hash=word.wall_hash,
