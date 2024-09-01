@@ -12,7 +12,7 @@ function WordElement({word, onChange}) {
     <Grid item sx={null} md={3}/>
     <Grid item sx={12} md={6}>
       <TextField
-        variant="standard"
+        variant="filled"
         fullWidth
         value={word.word}
         onChange={(e) => {onChange(e.target.value, word.id)}} />
@@ -94,6 +94,46 @@ export default function PlayerView() {
    })
   }
 
+  const changeWord = (word, id) => {
+    let lastWord = myWords[myWords.length - 1];
+    if (lastWord !== undefined) {
+      if ('id' in lastWord) {
+        if (lastWord.id === id && lastWord.word === "") {
+            // Adding the first bit of the word -- Add Another Row
+            addWord();
+        }
+      }
+    }
+    // Call the API
+    fetch("/api/v1/words/", {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          id: id,
+          word: word,
+          wall_hash: window.wall_hash,
+          player_id: client_id,
+        })
+    })
+    .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+       return response.json();
+   })
+   .then(json => {
+       setMyWords(json);
+   })
+   .catch(function () {
+       console.error(`Failed to update word for player: ${client_id}`)
+   })
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <CssBaseline />
@@ -114,7 +154,7 @@ export default function PlayerView() {
       <Box m={2} pt={3}>
         <Grid container spacing={2}>
           {myWords.map((wordDef, _) => (
-            <WordElement word={wordDef}/>
+            <WordElement word={wordDef} onChange={changeWord}/>
           ))}
         </Grid>
       </Box>
