@@ -69,22 +69,24 @@ async def get_words_for_wall(
     if wall_id.lower() == "all":
         return await WordResponse.all()
     if (wall := manager.get_by_id(wall_id=wall_id)):
-        filters = {"wall_hash": wall.hash}
+        extra_filters = {}
         if player_id:
-            filters["player_id"] = player_id
-        word_records = await WordResponse.filter(**filters)
+            extra_filters["player_id"] = player_id
+        word_records = await WordResponse.filter(
+            WordResponse.gt('word', ""), # Ensure Not Empty
+            wall_hash=wall.hash
+            **extra_filters
+        )
         if player_id:
             # Loading for a Player Page
             return word_records
         words = {}
         for record in word_records:
-            if not record.word:
-                # Null/Empty -- Skip
-                continue
-            if record.word not in words:
-                words[record.word] = 1 # Record Word
+            cleaned_word = record.word.strip()
+            if cleaned_word not in words:
+                words[cleaned_word] = 1 # Record Word
             else:
-                words[record.word] += 1 # Increment
+                words[cleaned_word] += 1 # Increment
         # Pack List of Dictionaries with Appropriate Structure
         return [{'value':w, 'count':cnt} for w, cnt in words.items()]
     logger.error(f"Attempted to load Wall with ID: {wall_id}")
