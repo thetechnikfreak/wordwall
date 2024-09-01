@@ -38,8 +38,8 @@ services:
     restart: unless-stopped
     environment:
       # Optional Configuration Parameters
-      # - SITE_URL: https://wordwall.example.com
-      # - SITE_NAME: WordWall
+      # - APPLICATION_SITE_URL: https://wordwall.example.com
+      # - APPLICATION_SITE_NAME: WordWall
     volumes:
       - ./config:/server/config
 
