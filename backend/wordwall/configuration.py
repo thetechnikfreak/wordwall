@@ -12,7 +12,7 @@ from pathlib import Path
 
 from simple_toml_configurator import Configuration
 
-CONFIG_FILE_PATH = Path(os.getenv("CONFIG_FILE", "./config/app.conf"))
+CONFIG_FILE_PATH = Path(os.getenv("CONFIG_FILE", "./config"))
 
 DEFAULT_CONFIGURATION = {
     "application": {
