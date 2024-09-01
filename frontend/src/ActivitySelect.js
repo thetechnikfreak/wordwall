@@ -27,14 +27,23 @@ import { mdiAccountGroup, mdiFileWordBox, mdiKnob } from '@mdi/js';
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href={window.defer_url}>
-        {window.site_name}
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+    <div>
+      <Typography variant="body2" color="textSecondary" align="center">
+        {'Copyright © '}
+        <Link color="inherit" href={window.defer_url}>
+          {window.site_name}
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+      <Typography variant="body2" color="textSecondary" align="center">
+        {'Created by the geeks at '}
+        <Link color="inherit" href="https://stanleysolutionsnw.com">
+          {'Stanley Solutions'}
+        </Link>
+        {' | Engineering and Creativity Under One Hat.'}
+      </Typography>
+    </div>
   );
 }
 

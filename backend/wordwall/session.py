@@ -9,6 +9,8 @@ License: MIT
 
 from uuid import uuid4
 
+from loguru import logger
+
 #pylint: disable=too-few-public-methods
 class Wall:
     """Structure to Represent a Wall."""
@@ -43,15 +45,16 @@ class Manager:
 
     _walls: list[Wall] = ALL_WALLS
 
-    def __init__(self):
-        """Constructor."""
-        self._walls = []
-
     def new_wall(self) -> Wall:
         """Record a New Wall."""
         new_wall = Wall()
         self._walls.append(new_wall)
+        logger.debug(f"Storing new wall information. ID: {new_wall.id}")
         return new_wall
+
+    def all_walls(self) -> list[Wall]:
+        """Return all Walls."""
+        return self._walls
 
     def get_by_id(self, wall_id: str) -> Wall:
         """Locate the Wall by its ID."""

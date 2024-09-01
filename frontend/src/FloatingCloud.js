@@ -10,29 +10,33 @@ const WordPaper = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
     textAlign: 'center',
   }));
- 
-const testWords = [
-  {
-    value: 'told',
-    count: 64,
-  },
-  {
-    value: 'mistake',
-    count: 11,
-  },
-  {
-    value: 'thought',
-    count: 16,
-  },
-  {
-    value: 'bad',
-    count: 17,
-  },
-]
 
-export default function FloatingCloud({
-  words = testWords,
-}) {
+export default function FloatingCloud({wall_id = "test"}) {
+  const [words, setWords] = React.useState([]);
+
+  React.useEffect(()=>{
+    // Load Requisites when page Completes
+    getWords();
+    setInterval(getWords, 1000);
+  },[]);
+
+
+  const getWords = () => {
+    // Call the API
+    fetch(`/api/v1/words/${wall_id}`)
+   .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+       return response.json();
+   })
+   .then(json => {
+       setWords(json);
+   })
+   .catch(function () {
+       console.error(`Failed to load words for ${wall_id}`)
+   })
+  }
 
   return (
     <>

@@ -29,4 +29,5 @@ class WordResponse(DataBaseModel):
     """Single Word Response from a Participant."""
     id: str = PrimaryKey(default=lambda: str(uuid4()))
     wall_hash: str
+    player_id: str
     word: str

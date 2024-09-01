@@ -7,9 +7,10 @@ License: MIT
 """
 ################################################################################
 
-from typing import Awaitable
+from typing import Awaitable, Union
 
 from fastapi import APIRouter, HTTPException, status
+from loguru import logger
 
 from ..database import WordResponse
 from ..session import Manager
@@ -18,7 +19,29 @@ router = APIRouter(prefix="/words")
 
 manager = Manager()
 
-async def active_wall(func: Awaitable, wall_hash: str):
+TEST_WORDS = [{
+    "value": 'invent',
+    "count": 64,
+  },
+  {
+    "value": 'clever',
+    "count": 11,
+  },
+  {
+    "value": 'thought',
+    "count": 16,
+  },
+  {
+    "value": 'create',
+    "count": 17,
+  },
+]
+
+async def active_wall(
+    func: Awaitable,
+    wall_hash: str,
+    player_id: str | None = None
+) -> list[dict[str, Union[int, str]]]:
     """Handler for the Wall's Activity."""
     if (wall := manager.get_by_hash(wall_hash=wall_hash)):
         if wall.active:
@@ -28,39 +51,77 @@ async def active_wall(func: Awaitable, wall_hash: str):
                 status_code=status.HTTP_410_GONE,
                 detail="That WordWall is not presently active."
             )
-        return await get_words_for_wall(wall_id=wall.hash)
+        return await get_words_for_wall(wall_id=wall.id, player_id=player_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="That WordWall could not be found."
     )
 
 @router.get("/{wall_id}")
-async def get_words_for_wall(wall_id: str) -> list[dict[str, int]]:
+async def get_words_for_wall(
+    wall_id: str,
+    player_id: str | None = None,
+):
     """Get all of the Words for a Particular Wall."""
-    if manager.get_by_id(wall_id=wall_id):
-        word_records = await WordResponse.filter(wall_id=wall_id)
+    if 'test' in wall_id.lower():
+        # Respond with Test Words
+        return TEST_WORDS
+    if wall_id.lower() == "all":
+        return await WordResponse.all()
+    if (wall := manager.get_by_id(wall_id=wall_id)):
+        filters = {"wall_hash": wall.hash}
+        if player_id:
+            filters["player_id"] = player_id
+        word_records = await WordResponse.filter(**filters)
+        if player_id:
+            # Loading for a Player Page
+            return word_records
         words = {}
         for record in word_records:
             if record.word not in words:
                 words[record.word] = 1 # Record Word
             else:
                 words[record.word] += 1 # Increment
+        # Pack List of Dictionaries with Appropriate Structure
+        return [{'value':w, 'count':cnt} for w, cnt in words.items()]
+    logger.error(f"Attempted to load Wall with ID: {wall_id}")
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="That WordWall could not be found."
     )
 
 @router.put("/")
-async def add_word_to_wall(word: WordResponse) -> list[dict[str, int]]:
+async def add_word_to_wall(
+    word: WordResponse,
+    player_id: str | None = None,
+) -> list[dict[str, Union[int, str]]]:
     """Add a new Word to a Specified Wall."""
-    return await active_wall(func=word.create, wall_hash=word.wall_hash)
+    if player_id:
+        word.player_id = player_id
+    return await active_wall(
+        func=word.insert,
+        wall_hash=word.wall_hash,
+        player_id=word.player_id,
+    )
 
 @router.post("/")
-async def update_word_on_wall(word: WordResponse) -> list[dict[str, int]]:
+async def update_word_on_wall(
+    word: WordResponse
+) -> list[dict[str, Union[int, str]]]:
     """Update an Existing Word on a Specified Wall."""
-    return await active_wall(func=word.update, wall_hash=word.wall_hash)
+    return await active_wall(
+        func=word.update,
+        wall_hash=word.wall_hash,
+        player_id=word.player_id,
+    )
 
 @router.delete("/")
-async def remove_word_from_wall(word: WordResponse) -> list[dict[str, int]]:
+async def remove_word_from_wall(
+    word: WordResponse,
+) -> list[dict[str, Union[int, str]]]:
     """Remove an Existing Word from a Wall."""
-    return await active_wall(func=word.delete, wall_hash=word.wall_hash)
+    return await active_wall(
+        func=word.delete,
+        wall_hash=word.wall_hash,
+        player_id=word.player_id,
+    )

@@ -14,7 +14,7 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from fastapi import FastAPI, Request, Cookie
+from fastapi import FastAPI, Request, Cookie, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -40,7 +40,9 @@ async def lifespan(_: FastAPI):
     logger.debug(__header__)
     # Manage Temporary Database File Contextually
     with TemporaryDirectory() as tmp_directory:
-        await connect_database(database_path=Path(tmp_directory) / "words.db")
+        db_file = Path(tmp_directory) / "words.db"
+        logger.debug(f"Temporary Database File: {db_file}")
+        await connect_database(database_path=db_file)
         yield
     # Teardown
 
@@ -113,11 +115,16 @@ async def root(request: Request) -> HTMLResponse:
 @app.get("/host/{wall_id}", response_class=HTMLResponse, include_in_schema=False)
 async def operate_wall(request: Request, wall_id: str) -> HTMLResponse:
     """Generate the New Data Store for a New Wall - Operate as Moderator."""
-    return core_response(
-        request=request,
-        wall_id=wall_id,
-        wall_hash=main_manager.get_by_id(wall_id).hash,
-    )
+    try:
+        return core_response(
+            request=request,
+            wall_id=wall_id,
+            wall_hash=main_manager.get_by_id(wall_id).hash,
+        )
+    except AttributeError:
+        return RedirectResponse(
+            url=f"{settings.application.site_url}?no_wall_hash",
+        )
 
 @app.get("/play/{wall_hash}", response_class=HTMLResponse, include_in_schema=False)
 @app.get("/review/{wall_hash}", response_class=HTMLResponse, include_in_schema=False)
