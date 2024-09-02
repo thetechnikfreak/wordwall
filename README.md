@@ -32,7 +32,7 @@ parameters for your application to use. Here's an example:
 # WordWall Example Configuration
 services:
   wordwall:
-    image: ghcr.io/engineerjoe440/wordwall:main
+    image: ghcr.io/engineerjoe440/wordwall:master
     ports:
       - 8082:80
     restart: unless-stopped
