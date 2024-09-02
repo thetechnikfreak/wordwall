@@ -11,8 +11,8 @@ function WordElement({word, onChange}) {
 
   return (
     <>
-    <Grid item sx={null} md={3}/>
-    <Grid item sx={12} md={6}>
+    <Grid item xs={null} md={3}/>
+    <Grid item xs={12} md={6}>
       <TextField
         variant="filled"
         fullWidth
@@ -20,7 +20,7 @@ function WordElement({word, onChange}) {
         value={word.word}
         onChange={(e) => {onChange(e.target.value, word.id)}} />
     </Grid>
-    <Grid item sx={null} md={3}/>
+    <Grid item xs={null} md={3}/>
     </>
   );
 }
@@ -91,7 +91,7 @@ export default function PlayerView() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-      
+
         //make sure to serialize your JSON body
         body: JSON.stringify({
           word: "",
@@ -130,7 +130,7 @@ export default function PlayerView() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-      
+
         //make sure to serialize your JSON body
         body: JSON.stringify({
           id: id,
