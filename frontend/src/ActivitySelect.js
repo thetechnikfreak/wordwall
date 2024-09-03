@@ -107,7 +107,7 @@ const dialogOptions = {
     buttonText: "Start",
     inputPrompt: "New Title",
     inputDefault: "",
-    path: "/host/{wall_id}"
+    path: "/host/{wall_id}",
   },
   participate: {
     title: "Weigh in with your Words",
@@ -115,7 +115,7 @@ const dialogOptions = {
     buttonText: "Join",
     inputPrompt: "Game Code",
     inputDefault: "{wall_hash}",
-    path: "/play/{userInput}"
+    path: "/play/{userInput}",
   },
   review: {
     title: "Review your Team's WordWall",
@@ -123,7 +123,7 @@ const dialogOptions = {
     buttonText: "Review",
     inputPrompt: "Game Code",
     inputDefault: "{wall_hash}",
-    path: "/review/{userInput}"
+    path: "/review/{userInput}",
   },
 };
 
@@ -187,7 +187,7 @@ export default function ActivitySelect() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-      
+
         //make sure to serialize your JSON body
         body: JSON.stringify({
           name: userInput,
@@ -205,7 +205,11 @@ export default function ActivitySelect() {
     // Use the Client-Specific Wall ID or Hash to Navigate
     navigate(path.formatUnicorn({
       wall_id: window.wall_id,
-      userInput: userInput,
+      userInput: (
+        userInput !== "" ? userInput : diagOpts.inputDefault.formatUnicorn({
+          wall_hash: window.wall_hash,
+        })
+      ),
     }));
   }
 
