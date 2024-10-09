@@ -106,6 +106,7 @@ async def get_word_count(wall_id: str) -> int:
             wall_hash=wall.hash,
             count_rows=True, # Return as a count
         )
+    return 0
 
 @router.put("/")
 async def add_word_to_wall(

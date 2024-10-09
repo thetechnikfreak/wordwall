@@ -21,7 +21,10 @@ export default function FloatingCloud({wall_id = "test", onClick=() => {}}) {
       fetch(`/api/v1/words/${wall_id}`)
     .then(response => {
         if (!response.ok) {
+          if (String(response.status) === "404") {
+            window.location.href = "/";
             throw new Error("HTTP error " + response.status);
+          }
         }
         return response.json();
     })

@@ -7,7 +7,24 @@ import { mdiFileWordBox } from '@mdi/js';
 import { AppBar, Box, Grid, TextField, Typography, Toolbar } from '@mui/material';
 import Cookies from 'js-cookie';
 
-function WordElement({word, onChange}) {
+function WordElement({wordObject, onChange, onNewWord}) {
+  const [word, setWord] = React.useState('');
+  const [wordId, setWordId] = React.useState(null);
+
+  React.useEffect(() => {
+    setWord(wordObject.word);
+    setWordId(wordObject.id);
+  }, [wordObject])
+
+  React.useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (!!wordId) {
+        onChange(word, wordId);
+      }
+    }, 200)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [word])
 
   return (
     <>
@@ -17,8 +34,9 @@ function WordElement({word, onChange}) {
         variant="filled"
         fullWidth
         label="Enter a Word!"
-        value={word.word}
-        onChange={(e) => {onChange(e.target.value, word.id)}} />
+        value={word}
+        inputProps={{ maxLength: 30 }}
+        onChange={(e) => {setWord(e.target.value)}} />
     </Grid>
     <Grid item xs={null} md={3}/>
     </>
@@ -114,15 +132,9 @@ export default function PlayerView() {
   }
 
   const changeWord = (word, id) => {
+    // Record the Last Word for New Word Checking
     let lastWord = myWords[myWords.length - 1];
-    if (lastWord !== undefined) {
-      if ('id' in lastWord) {
-        if (lastWord.id === id && lastWord.word === "") {
-            // Adding the first bit of the word -- Add Another Row
-            addWord();
-        }
-      }
-    }
+
     // Call the API
     fetch("/api/v1/words/", {
         method: "post",
@@ -145,12 +157,19 @@ export default function PlayerView() {
        }
        return response.json();
    })
-   .then(json => {
-       setMyWords(json);
-   })
    .catch(function () {
        console.error(`Failed to update word for player: ${client_id}`)
    })
+
+   // Create a New Space for a New Word
+    if (lastWord !== undefined) {
+      if ('id' in lastWord) {
+        if (lastWord.id === id && lastWord.word === "") {
+            // Adding the first bit of the word -- Add Another Row
+            addWord();
+        }
+      }
+    }
   }
 
   return (
@@ -175,7 +194,7 @@ export default function PlayerView() {
       <Box m={2} pt={3}>
         <Grid container spacing={2}>
           {myWords.map((wordDef, _) => (
-            <WordElement word={wordDef} onChange={changeWord}/>
+            <WordElement wordObject={wordDef} onChange={changeWord} onNewWord={addWord}/>
           ))}
         </Grid>
       </Box>

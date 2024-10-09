@@ -16,6 +16,7 @@ export default function HostWallMenu() {
   const [viewWall, setViewWall] = React.useState(true);
   const [wordCount, setWordCount] = React.useState(0);
   const [wallName, setWallNames] = React.useState("");
+  const [enabledStatus, setEnabledStatus] = React.useState(true);
   const navigate = useNavigate();
 
   React.useEffect(()=>{
@@ -30,12 +31,24 @@ export default function HostWallMenu() {
        return response.json();
    })
    .then(json => {
-    console.log(json);
     setWallNames(json);
    })
    .catch(function () {
-       console.error(`Failed to load word count for ${window.wall_id}`)
+       console.error(`Failed to load wall name for ${window.wall_id}`)
    })
+   fetch(`/api/v1/walls/${window.wall_id}/enabled`)
+  .then(response => {
+      if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+      }
+      return response.json();
+  })
+  .then(json => {
+   setEnabledStatus(json);
+  })
+  .catch(function () {
+      console.error(`Failed to load word count for ${window.wall_id}`)
+  })
     setInterval(getWordCount, 1000);
   },[]);
 
@@ -64,7 +77,7 @@ export default function HostWallMenu() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-      
+
         //make sure to serialize your JSON body
         body: JSON.stringify({
           name: newName,
@@ -73,6 +86,32 @@ export default function HostWallMenu() {
     .then(response => {
        if (!response.ok) {
            throw new Error("HTTP error " + response.status);
+       }
+   })
+   .catch(function () {
+       console.error(`Failed to update the name for wall: ${window.wall_id}`)
+   })
+  }
+
+  const updateEnabledStatus = () => {
+    // Call the API
+    fetch(`/api/v1/walls/${window.wall_id}/enabled`, {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          enable: !enabledStatus,
+        })
+    })
+    .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       } else {
+        setEnabledStatus(!enabledStatus);
        }
    })
    .catch(function () {
@@ -122,7 +161,7 @@ export default function HostWallMenu() {
                 spacing={2}
               >
                 <Grid item md={2} sx={null}></Grid>
-                <Grid item md={3} sx={12}>
+                <Grid item md={2} sx={12}>
                   <Button
                     variant="contained"
                     md={4} xs={12}
@@ -131,10 +170,20 @@ export default function HostWallMenu() {
                     {viewWall ? "Hide Wall View" : "Show Wall View"}
                   </Button>
                 </Grid>
-                <Grid item md={2} sx={null}></Grid>
-                <Grid item md={3} sx={12}>
+                <Grid item md={1} sx={null}></Grid>
+                <Grid item md={2} sx={12}>
                   Responses:
                   {wordCount}
+                </Grid>
+                <Grid item md={1} sx={null}></Grid>
+                <Grid item md={2} sx={12}>
+                  <Button
+                    variant="contained"
+                    md={4} xs={12}
+                    onClick={updateEnabledStatus}
+                  >
+                    {enabledStatus ? "Disable Wall" : "Enable Wall"}
+                  </Button>
                 </Grid>
                 <Grid item md={2} sx={null}></Grid>
               </Grid>
