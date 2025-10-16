@@ -6,6 +6,7 @@ import ActivitySelect from "./ActivitySelect";
 import HostWallMenu from './HostWallMenu';
 import PlayerView from './PlayerView';
 import ReviewWall from './ReviewWall';
+import PresentWall from './PresentWall';
 import theme from "./theme";
 import './index.css';
 
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
   {path: "/play/:hash", element: <PlayerView />},
   {path: "/host/:id", element: <HostWallMenu />},
   {path: "/review/:hash", element: <ReviewWall />},
+  {path: "/present/:hash", element: <PresentWall />},
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
